@@ -15,9 +15,6 @@
 
 namespace HX {
     class ditr {
-    public:
-        void Test() {};
-
     };
 }
 
