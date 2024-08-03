@@ -1,6 +1,7 @@
 #ifndef HX_CONSOLE_OUTPUT_H
 #define HX_CONSOLE_OUTPUT_H
 
+#include "Hxditr.hpp"
 #include <memory>
 #include <stdint.h>
 #include <vector>
@@ -44,6 +45,15 @@ namespace HX {
     };
 
     class UiElement {
+        // Elemnent size can be represented either as an amount of characters
+        // or percent of availible console dimensions
+        union {
+            Vec2<float> m_fDim;
+            Vec2<uint32_t> m_uDim;
+        };
+        
+        // Elements are painted from left to right, from lowest index to highest
+        uint8_t m_uElementIndex;
     };
 
     class ConsoleOut {

@@ -1,9 +1,12 @@
 #include "Hxditr.hpp"
 #include <fstream>
 #include <ios>
+#include <stdexcept>
 
 HX::ditr::ditr(const char* szFile) {
-    SetFile(szFile);
+    // There is no way to communicate that file was invalid so we are throwing.
+    if (!SetFile(szFile))
+        throw std::runtime_error("File was invalid");
 }
 
 HX::ditr::~ditr() {
@@ -23,13 +26,13 @@ bool HX::ditr::SetFile(const char* szFile) {
 
     // Create buffer for the binary data
 
-    // Read the file in to buffer
+    // Read the file in to the buffer
     
     return true;
 }
 
 void HX::ditr::Move(const HX::MoveDirection& md, const uint32_t& amount) {
-    int32_t directionalMul = 1;
+    int8_t directionalMul = 1;
     uint64_t newPos;
 
     switch (md) {
@@ -55,8 +58,7 @@ void HX::ditr::Move(const HX::MoveDirection& md, const uint32_t& amount) {
 
     // Only asign new position if it's in boundries of file size and it didn't 
     // overflow.
-    if (m_uFileSize > newPos &&
-        m_uCurrentFilePos < m_uFileSize)
+    if (newPos < m_uFileSize)
         m_uCurrentFilePos = newPos;
 }
 

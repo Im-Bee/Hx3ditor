@@ -27,6 +27,12 @@ namespace HX {
 
     typedef unsigned char Byte;
 
+    template<typename T> 
+    struct Vec2 {
+        T x;
+        T y;
+    };
+
     enum MoveDirection {
         Left,
         Right,
@@ -55,7 +61,7 @@ namespace HX {
          **/
         void Move(const MoveDirection& md, const uint32_t& amount);
 
-        bool SetFile(const char* szFile);
+        bool SetFile(const char* file);
 
     private:
         /**
