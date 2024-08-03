@@ -20,3 +20,19 @@ HX::SwapBuffers::~SwapBuffers() noexcept {
     free(this->Front);
     free(this->Back);
 }
+
+void HX::ConsoleOut::Update() {
+    // Get current console dimensions
+    
+    // If they aren't the same then
+    // update every element
+
+    // 
+}
+
+void HX::ConsoleOut::Clear() {
+}
+
+void HX::ConsoleOut::Paint() {
+}
+

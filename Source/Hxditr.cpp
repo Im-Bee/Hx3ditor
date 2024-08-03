@@ -1,37 +1,105 @@
 #include "Hxditr.hpp"
+#include <fstream>
+#include <ios>
+
+HX::ditr::ditr(const char* szFile) {
+    SetFile(szFile);
+}
+
+HX::ditr::~ditr() {
+    if (m_pFile)
+        free(m_pFile);
+}
+
+bool HX::ditr::SetFile(const char* szFile) {
+    using fstrm = std::ifstream;
+
+    // Open the file
+    fstrm inFile = fstrm(szFile, std::ios::binary | std::ios_base::in);
+    if (!inFile.is_open())
+        return  false;
+    
+    // Get file size
+
+    // Create buffer for the binary data
+
+    // Read the file in to buffer
+    
+    return true;
+}
+
+void HX::ditr::Move(const HX::MoveDirection& md, const uint32_t& amount) {
+    int32_t directionalMul = 1;
+
+    switch (md) {
+    case HX::MoveDirection::Left:
+        directionalMul = -1;
+        [[fallthrough]];
+    case HX::MoveDirection::Right:   
+        m_uCurrentFilePos = m_uCurrentFilePos + (directionalMul * amount);
+        return;
+
+    case HX::MoveDirection::Up:
+        directionalMul = -1;
+        [[fallthrough]];
+    case HX::MoveDirection::Down:
+        m_uCurrentFilePos = m_uCurrentFilePos + (directionalMul * amount * this->GetCurUiWidth());
+        return;
+
+#ifdef _DEBUG
+    default:
+        throw std::runtime_error("Error: MoveDirection enum in HX::ditr::Move() is outside of scope");
+#endif // _DEBUG
+    }
+}
+
+uint32_t HX::ditr::GetCurUiWidth() {
+    return -1;
+}
 
 int main(int argc, char* argv[]) {
     using namespace std;
-    using fstream = std::fstream;
+    using fstrm = std::fstream;
 
     // Decide if passed arguments are viable
     if (argc < 2 ||
         // strcmp() returns 0 if strings are identical
         !strcmp(argv[1], "--help") ||
         !strcmp(argv[1], "-h") ||
-        !fstream(argv[1]).is_open()) {
+        !fstrm(argv[1]).is_open()) {
         
         cout << "Passed argument is invalid." << endl
              << endl
              << "Use: " << endl
              << "   Hx3ditr [Path to a file]" << endl;
 
-#ifndef _DEBUG
+        // In debug version, we don't care if any arguments has been passed.
+        // Clear the screen and proceed anyway.
+#ifdef _DEBUG
+        HX::ConsoleOut::Clear();
+#else
         return 1;
 #endif // !_DEBUG
     }
 
     // Initialize variables
-    std::shared_ptr<HX::ditr> pDitr = std::make_shared<HX::ditr>();
-    HX::ConsoleOut out = HX::ConsoleOut();
-    HX::InputThread it = HX::InputThread(pDitr);
+    std::shared_ptr<HX::ditr> myDitrPtr = std::make_shared<HX::ditr>();
+    HX::ConsoleOut myOut = HX::ConsoleOut();
+    HX::InputThread myIn = HX::InputThread(myDitrPtr);
 
     // Enter the main loop
-    while (!it.Exit()) {
+    while (!myIn.Exit()) {
+        // Update ui objects queued for output
+        myOut.Update();
 
+        // Repaint output
+        myOut.Clear();
+        myOut.Paint();
     }
 
     // Clean up
 
     return 0;
 }
+
+

@@ -1,7 +1,9 @@
 #ifndef HX_CONSOLE_OUTPUT_H
 #define HX_CONSOLE_OUTPUT_H
 
+#include <memory>
 #include <stdint.h>
+#include <vector>
 
 namespace HX {
 
@@ -41,13 +43,21 @@ namespace HX {
         }
     };
 
+    class UiElement {
+    };
+
     class ConsoleOut {
+        std::vector<HX::UiElement> m_Elements = {};
         SwapBuffers m_Outputs = SwapBuffers(HX::MaxOutHeight * HX::MaxOutWidth);
 
     public:
         ConsoleOut() noexcept = default;
         ~ConsoleOut() noexcept = default;
-
+        
+    public:
+        void Update();
+        static void Clear();
+        void Paint();
     };
 }
 
