@@ -30,27 +30,34 @@ bool HX::ditr::SetFile(const char* szFile) {
 
 void HX::ditr::Move(const HX::MoveDirection& md, const uint32_t& amount) {
     int32_t directionalMul = 1;
+    uint64_t newPos;
 
     switch (md) {
     case HX::MoveDirection::Left:
         directionalMul = -1;
         [[fallthrough]];
     case HX::MoveDirection::Right:   
-        m_uCurrentFilePos = m_uCurrentFilePos + (directionalMul * amount);
-        return;
+        newPos = m_uCurrentFilePos + (directionalMul * amount);
+        break;
 
     case HX::MoveDirection::Up:
         directionalMul = -1;
         [[fallthrough]];
     case HX::MoveDirection::Down:
-        m_uCurrentFilePos = m_uCurrentFilePos + (directionalMul * amount * this->GetCurUiWidth());
-        return;
+        newPos  = m_uCurrentFilePos + (directionalMul * amount * this->GetCurUiWidth());
+        break;
 
 #ifdef _DEBUG
     default:
         throw std::runtime_error("Error: MoveDirection enum in HX::ditr::Move() is outside of scope");
 #endif // _DEBUG
     }
+
+    // Only asign new position if it's in boundries of file size and it didn't 
+    // overflow.
+    if (m_uFileSize > newPos &&
+        m_uCurrentFilePos < m_uFileSize)
+        m_uCurrentFilePos = newPos;
 }
 
 uint32_t HX::ditr::GetCurUiWidth() {
