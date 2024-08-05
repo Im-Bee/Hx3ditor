@@ -106,7 +106,18 @@ int main(int argc, char* argv[]) {
     HX::InputThread myIn = HX::InputThread(myDitrPtr);
   
 #ifdef _DEBUG
-    if (myDitrPtr->SetFile("../TestFile.txt")) {
+    string testFilePath = __FILE__;
+    
+    auto li = testFilePath.find("/Source/");
+    if (li == std::string::npos)
+        li = testFilePath.find("\\Source\\");
+
+    testFilePath.erase(li, std::string::npos);
+    testFilePath += "/TestFile.txt";
+    HX_DBG_PRT_N("Opening test file from path: ");
+    HX_DBG_PRT_N(testFilePath);
+
+    if (myDitrPtr->SetFile(testFilePath.c_str())) {
         HX_DBG_PRT_N("Sucessfully opened the test file");
     }
     else {
