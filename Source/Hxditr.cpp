@@ -1,7 +1,9 @@
 #include "Hxditr.hpp"
+#include <cstdlib>
 #include <fstream>
 #include <ios>
 #include <stdexcept>
+#include <filesystem>
 
 HX::ditr::ditr(const char* szFile) {
     // There is no way to communicate that file was invalid so we are throwing.
@@ -16,6 +18,7 @@ HX::ditr::~ditr() {
 
 bool HX::ditr::SetFile(const char* szFile) {
     using fstrm = std::ifstream;
+    using std::filesystem::file_size;
 
     // Open the file
     fstrm inFile = fstrm(szFile, std::ios::binary | std::ios_base::in);
@@ -23,10 +26,13 @@ bool HX::ditr::SetFile(const char* szFile) {
         return  false;
     
     // Get file size
+    m_uFileSize = file_size(szFile);
 
     // Create buffer for the binary data
+    m_pFile = (HX::Byte*)malloc(sizeof(HX::Byte) * m_uFileSize);
 
     // Read the file in to the buffer
+    inFile.read(reinterpret_cast<char*>(m_pFile), m_uFileSize);
     
     return true;
 }
@@ -91,10 +97,22 @@ int main(int argc, char* argv[]) {
 #endif // !_DEBUG
     }
 
+    HX_DBG_PRT_N("Program was started with following arguments: ");
+    HX_DBG_PRT_FE(argv, argc);
+
     // Initialize variables
     std::shared_ptr<HX::ditr> myDitrPtr = std::make_shared<HX::ditr>();
     HX::ConsoleOut myOut = HX::ConsoleOut();
     HX::InputThread myIn = HX::InputThread(myDitrPtr);
+  
+#ifdef _DEBUG
+    if (myDitrPtr->SetFile("../TestFile.txt")) {
+        HX_DBG_PRT_N("Sucessfully opened the test file");
+    }
+    else {
+        HX_DBG_PRT_N("Failed to open the test file");
+    }
+#endif // _DEBUG
 
     // Enter the main loop
     while (!myIn.Exit()) {

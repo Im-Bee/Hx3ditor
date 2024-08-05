@@ -19,6 +19,19 @@
 
 #define HX_UNKOWN_SIZE ((uint64_t)(-1))
 
+#pragma region DEBUGGING
+#ifdef _DEBUG
+#   define HX_DBG_PRT(x) std::cout << "[DBG]: " << x 
+#   define HX_DBG_PRT_N(x) std::cout << "[DBG]: " << x << std::endl
+#   define HX_DBG_PRT_FE(arr, range)                                              \
+    for (int i = 0; i < range; ++i) std::cout << "[DBG]: " << arr[i] << std::endl;
+#else
+#   define HX_DBG_PRT(x) 
+#   define HX_DBG_PRT_N(x) 
+#   define HX_DBG_PRT_FE(arr, range)                                     
+#endif // _DEBUG
+#pragma endregion
+
 namespace HX {
     /**
      * Pre declarations
