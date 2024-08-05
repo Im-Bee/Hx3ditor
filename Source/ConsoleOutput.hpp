@@ -2,6 +2,7 @@
 #define HX_CONSOLE_OUTPUT_H
 
 #include "Hxditr.hpp"
+#include <cmath>
 #include <memory>
 #include <stdint.h>
 #include <vector>
@@ -47,17 +48,40 @@ namespace HX {
     class UiElement {
         // Elemnent size can be represented either as an amount of characters
         // or percent of availible console dimensions
-        union {
-            Vec2<float> m_fDim;
-            Vec2<uint32_t> m_uDim;
+        union m_Dim {
+            Vec2<float> percent;
+            Vec2<uint32_t> cells;
         };
         
         // Elements are painted from left to right, from lowest index to highest
-        uint8_t m_uElementIndex;
+        uint8_t m_uElementIndex = 0;
+
+    public:
+        UiElement() noexcept = default;
+        UiElement(uint8_t ei) : m_uElementIndex(ei) {};
+        ~UiElement() noexcept = default;
+
+    public:
+        void SetIndex(uint8_t i) {
+            m_uElementIndex = i;
+        }
+
+        const uint8_t& GetIndex() {
+            return m_uElementIndex;
+        }
+    };
+
+    class Ui : public std::vector<std::shared_ptr<HX::UiElement>> {
+        uint8_t m_AvalibleIndex = 0;
+
+        public:
+            void Add(std::shared_ptr<HX::UiElement> ue);
+
+            uint8_t GetLastAvaliableIndex();
     };
 
     class ConsoleOut {
-        std::vector<HX::UiElement> m_Elements = {};
+        Ui m_Ui = {};
         SwapBuffers m_Outputs = SwapBuffers(HX::MaxOutHeight * HX::MaxOutWidth);
 
     public:
@@ -68,6 +92,21 @@ namespace HX {
         void Update();
         static void Clear();
         void Paint();
+
+    public:
+        void AddElement(std::shared_ptr<HX::UiElement> ue) {
+            for (auto& i : m_Ui) {
+                if (ue->GetIndex() == i->GetIndex()) {
+                    HX_DBG_PRT("Warrning element with index ");
+                    HX_DBG_PRT(ue->GetIndex());
+                    HX_DBG_PRT_N(" already exists changing index to last availible");
+                    
+                    ue->SetIndex(m_Ui.GetLastAvaliableIndex());
+                }
+            }
+
+            m_Ui.Add(std::move(ue));
+        }
     };
 }
 

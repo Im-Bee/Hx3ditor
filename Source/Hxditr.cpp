@@ -1,7 +1,9 @@
 #include "Hxditr.hpp"
+#include "ConsoleOutput.hpp"
 #include <cstdlib>
 #include <fstream>
 #include <ios>
+#include <memory>
 #include <stdexcept>
 #include <filesystem>
 
@@ -124,6 +126,9 @@ int main(int argc, char* argv[]) {
         HX_DBG_PRT_N("Failed to open the test file");
     }
 #endif // _DEBUG
+       
+    shared_ptr<HX::UiElement> myMainView = make_shared<HX::UiElement>(0);
+    myOut.AddElement(myMainView);
 
     // Enter the main loop
     while (!myIn.Exit()) {

@@ -33,11 +33,6 @@
 #pragma endregion
 
 namespace HX {
-    /**
-     * Pre declarations
-     **/
-    class UiElement;
-
     typedef unsigned char Byte;
 
     template<typename T> 
