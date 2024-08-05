@@ -71,13 +71,13 @@ namespace HX {
         }
     };
 
-    class Ui : public std::vector<std::shared_ptr<HX::UiElement>> {
-        uint8_t m_AvalibleIndex = 0;
-
+    struct Ui : private std::vector<std::shared_ptr<HX::UiElement>> {
         public:
             void Add(std::shared_ptr<HX::UiElement> ue);
+            size_t Size() { return this->size(); }
+            uint8_t GetLastAvaliableIndex() { return (this->size()); }
 
-            uint8_t GetLastAvaliableIndex();
+            std::shared_ptr<HX::UiElement> operator[](size_t i) { return *(this->begin() + i); }
     };
 
     class ConsoleOut {
@@ -93,18 +93,7 @@ namespace HX {
         static void Clear();
         void Paint();
 
-    public:
         void AddElement(std::shared_ptr<HX::UiElement> ue) {
-            for (auto& i : m_Ui) {
-                if (ue->GetIndex() == i->GetIndex()) {
-                    HX_DBG_PRT("Warrning element with index ");
-                    HX_DBG_PRT(ue->GetIndex());
-                    HX_DBG_PRT_N(" already exists changing index to last availible");
-                    
-                    ue->SetIndex(m_Ui.GetLastAvaliableIndex());
-                }
-            }
-
             m_Ui.Add(std::move(ue));
         }
     };

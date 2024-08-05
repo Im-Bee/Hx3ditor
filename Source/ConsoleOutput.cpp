@@ -30,6 +30,25 @@ void HX::ConsoleOut::Update() {
     // 
 }
 
+void HX::Ui::Add(std::shared_ptr<HX::UiElement> ue){
+    for (auto& i : *this ) {
+        if (ue->GetIndex() == i->GetIndex()) {
+            HX_DBG_PRT_B("Warrning element with index ");
+            HX_DBG_PRT_I(HX_STR(ue->GetIndex()));
+            HX_DBG_PRT_E(" already exists changing index to the last one");
+            
+            HX_DBG_PRT_B("Last avalible index is: ");
+            HX_DBG_PRT_I(HX_STR(this->GetLastAvaliableIndex()));
+            HX_DBG_PRT_E("");
+
+            ue->SetIndex(this->GetLastAvaliableIndex());
+        }
+    }
+
+    this->push_back(ue);
+}
+
+
 void HX::ConsoleOut::Clear() {
 }
 

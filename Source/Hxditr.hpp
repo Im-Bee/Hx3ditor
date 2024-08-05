@@ -21,14 +21,20 @@
 
 #pragma region DEBUGGING
 #ifdef _DEBUG
-#   define HX_DBG_PRT(x) std::cout << "[DBG]: " << x 
+#   define HX_DBG_PRT_B(x) std::cout << "[DBG]: " << x 
+#   define HX_DBG_PRT_I(x) std::cout << x 
+#   define HX_DBG_PRT_E(x) std::cout << x << std::endl; 
 #   define HX_DBG_PRT_N(x) std::cout << "[DBG]: " << x << std::endl
 #   define HX_DBG_PRT_FE(arr, range)                                              \
     for (int i = 0; i < range; ++i) std::cout << "[DBG]: " << arr[i] << std::endl;
+#   define HX_STR(x) std::to_string(x)
 #else
-#   define HX_DBG_PRT(x) 
+#   define HX_DBG_PRT_B(x) 
+#   define HX_DBG_PRT_I(x) 
+#   define HX_DBG_PRT_E(x) 
 #   define HX_DBG_PRT_N(x) 
 #   define HX_DBG_PRT_FE(arr, range)                                     
+#   define HX_STR(x) 
 #endif // _DEBUG
 #pragma endregion
 
