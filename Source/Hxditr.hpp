@@ -5,6 +5,7 @@
 #   include <Windows.h>
 #elif __GNUC__
 #   include <termios.h>
+#   include <sys/ioctl.h>
 #endif // _WIN#2
 
 
@@ -32,7 +33,7 @@
 #   define HX_DBG_PRT_B(x) 
 #   define HX_DBG_PRT_I(x) 
 #   define HX_DBG_PRT_E(x) 
-#   define HX_DBG_PRT_N(x) 
+#   define Hx_DBG_PRT_N(x) 
 #   define HX_DBG_PRT_FE(arr, range)                                     
 #   define HX_STR(x) 
 #endif // _DEBUG
@@ -43,6 +44,20 @@ namespace HX {
 
     template<typename T> 
     struct Vec2 {
+        Vec2() = default;
+        Vec2(T a, T b) : x(a), y(b) {};
+        ~Vec2() = default;
+
+        bool operator==(const Vec2<T>& right) {
+            if (this->x != right.x ||
+                this->y != right.y)
+                return false;
+            else
+                return true;
+        }
+        
+        bool operator!=(const Vec2<T>& right) { return operator==(right); }
+
         T x;
         T y;
     };

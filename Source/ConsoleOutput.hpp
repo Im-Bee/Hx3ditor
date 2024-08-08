@@ -1,11 +1,12 @@
 #ifndef HX_CONSOLE_OUTPUT_H
 #define HX_CONSOLE_OUTPUT_H
 
-#include "Hxditr.hpp"
 #include <cmath>
+#include <cstdio>
 #include <memory>
 #include <stdint.h>
 #include <vector>
+#include <sys/ioctl.h>
 
 namespace HX {
 
@@ -16,7 +17,15 @@ namespace HX {
 #elif __GNUC__
     typedef  uint8_t Cell;
 
-#   define GET_CHAR(ch) ch
+#   define HX_GET_CHAR(ch) ch
+
+#   define HX_GET_CONSOLE_DIM(vec2)                 \
+    {                                               \
+        struct winsize w;                           \
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);       \
+        vec2.x = w.ws_col;                          \
+        vec2.y = w.ws_row;                          \
+    }
 #endif // _WIN32
 
     constexpr int32_t MaxOutWidth = 512;
@@ -45,30 +54,27 @@ namespace HX {
         }
     };
 
-    class UiElement {
-        // Elemnent size can be represented either as an amount of characters
-        // or percent of availible console dimensions
-        union m_Dim {
-            Vec2<float> percent;
-            Vec2<uint32_t> cells;
-        };
-        
-        // Elements are painted from left to right, from lowest index to highest
-        uint8_t m_uElementIndex = 0;
+    // Elemnent size can be represented either as an amount of characters
+    // or percent of availible console dimensions
+    union Dimensions {
+        Dimensions() = default;
+        Dimensions(HX::Vec2<float> f) : percent(f) {};
+        Dimensions(HX::Vec2<uint32_t> i) : cells(i) {};
 
-    public:
-        UiElement() noexcept = default;
-        UiElement(uint8_t ei) : m_uElementIndex(ei) {};
+        public:
+        HX::Vec2<float> percent;
+        HX::Vec2<uint32_t> cells;
+    };
+
+    struct UiElement {
+        UiElement() noexcept : Dim(Vec2<float>(10.f, 10.f)) {};
         ~UiElement() noexcept = default;
-
-    public:
-        void SetIndex(uint8_t i) {
-            m_uElementIndex = i;
-        }
-
-        const uint8_t& GetIndex() {
-            return m_uElementIndex;
-        }
+        
+        Dimensions Dim;
+        bool IsPercent = false;
+        // Elements are painted from left to right, from lowest index to highest
+        uint8_t ElementIndex = 0;
+        Cell* Target = nullptr;
     };
 
     struct Ui : private std::vector<std::shared_ptr<HX::UiElement>> {
@@ -81,6 +87,7 @@ namespace HX {
     };
 
     class ConsoleOut {
+        HX::Vec2<uint32_t> m_CurDim = {};
         Ui m_Ui = {};
         SwapBuffers m_Outputs = SwapBuffers(HX::MaxOutHeight * HX::MaxOutWidth);
 

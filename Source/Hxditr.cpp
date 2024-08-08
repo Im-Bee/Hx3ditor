@@ -127,17 +127,31 @@ int main(int argc, char* argv[]) {
     }
 #endif // _DEBUG
        
-    shared_ptr<HX::UiElement> myMainView = make_shared<HX::UiElement>(0);
+    shared_ptr<HX::UiElement> myMainView = make_shared<HX::UiElement>();
+#ifdef _DEBUG
+    HX::Cell cells[512];
+    for (int i = 0; i < 512; ++i) cells[i] = 'A';
+    myMainView->Target = cells;
+    myMainView->IsPercent = false;
+    myMainView->Dim.cells.x = 10;
+    myMainView->Dim.cells.y = 10;
+#endif // _DEBUG
     myOut.AddElement(myMainView);
+
 
     // Enter the main loop
     while (!myIn.Exit()) {
         // Update ui objects queued for output
         myOut.Update();
 
+       
         // Repaint output
         myOut.Clear();
         myOut.Paint();
+
+#ifdef _DEBUG
+        sleep(1); 
+#endif // _DEBUG
     }
 
     // Clean up
