@@ -146,11 +146,10 @@ int main(int argc, char* argv[]) {
 
        
         // Repaint output
-        myOut.Clear();
         myOut.Paint();
 
 #ifdef _DEBUG
-        sleep(1); 
+        usleep(1000); 
 #endif // _DEBUG
     }
 

@@ -74,7 +74,6 @@ void HX::ConsoleOut::Clear() {
 }
 
 void HX::ConsoleOut::Paint() {
-    HX_DBG_PRT_N("NEWLINE");
 
     for (size_t i = 0; i < m_Ui.Size(); ++i) {
         auto myWidth = m_Ui[i]->Dim.cells.x;
@@ -90,13 +89,16 @@ void HX::ConsoleOut::Paint() {
         
         for (uint32_t k = 0; k < myHeight; ++k) {
             for (uint32_t j = 0; j < myWidth; ++j) {
-                HX_GET_CHAR(m_Outputs.Back[k * m_CurDim.x + j]) = 'A';
+                HX_GET_CHAR(m_Outputs.Back[k * m_CurDim.x + j + 1]) = 'A';
             }
         }
 
     }
     for (uint32_t k = 0; k < m_CurDim.y; ++k) {
-        HX_GET_CHAR(m_Outputs.Back[k * m_CurDim.x + 1]) = std::to_string(k)[0];
+         HX_GET_CHAR(m_Outputs.Back[k * m_CurDim.x + 1]) = std::to_string(k)[0];
+    }
+    for (uint32_t k = 0; k < m_CurDim.x; ++k) {
+         HX_GET_CHAR(m_Outputs.Back[k]) = std::to_string(k)[0];
     }
 
     const uint32_t lastIndx = m_CurDim.x;
